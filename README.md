@@ -1,8 +1,8 @@
 ## EIA Hourly Demand Data
 
-![release_badge](https://img.shields.io/github/v/release/hokiebrian/eia_duke_energy?style=for-the-badge)
-![release_date](https://img.shields.io/github/release-date/hokiebrian/eia_duke_energy?style=for-the-badge)
-[![License](https://img.shields.io/github/license/hokiebrian/eia_duke_energy?style=for-the-badge)](https://opensource.org/licenses/Apache-2.0)
+![release_badge](https://img.shields.io/github/v/release/hokiebrian/eia_hourly_demand?style=for-the-badge)
+![release_date](https://img.shields.io/github/release-date/hokiebrian/eia_hourly_demand?style=for-the-badge)
+[![License](https://img.shields.io/github/license/hokiebrian/eia_hourly_demand?style=for-the-badge)](https://opensource.org/licenses/Apache-2.0)
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
 
 You will need a EIA API Key (free). Register here: https://www.eia.gov/opendata/register.php
