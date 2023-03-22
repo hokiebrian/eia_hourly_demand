@@ -1,0 +1,13 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "description": "Enter your EIA Info",
+                "data": {
+                    "api_key": "EIA API Key",
+                    "id": "Balancing Authority"
+                }
+            }
+        }
+    }
+}
