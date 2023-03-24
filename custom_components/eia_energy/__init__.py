@@ -2,7 +2,7 @@
 from .const import DOMAIN
 
 CONF_API_KEY = "api_key"
-CONF_ID = "id"
+CONF_ID = "ba_id"
 
 def setup(hass, config):
     """Set up the EIA Energy component."""

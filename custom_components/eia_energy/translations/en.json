@@ -5,7 +5,7 @@
                 "description": "Enter your EIA Info",
                 "data": {
                     "api_key": "EIA API Key",
-                    "id": "Balancing Authority"
+                    "ba_id": "Balancing Authority"
                 }
             }
         }

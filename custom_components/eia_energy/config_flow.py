@@ -8,14 +8,14 @@ class EIAConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
 
         if user_input is not None:
-            return self.async_create_entry(title=user_input["id"], data=user_input)
+            return self.async_create_entry(title=user_input["ba_id"], data=user_input)
 
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema(
                 {
                     vol.Required("api_key"): str,
-                    vol.Required("id"): str,
+                    vol.Required("ba_id"): str,
                 }
             ),
             errors=errors,
