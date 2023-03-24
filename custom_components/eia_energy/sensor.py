@@ -3,14 +3,14 @@ import json
 import aiohttp
 
 from homeassistant.components.sensor import SensorEntity, SensorStateClass
-from homeassistant.const import CONF_API_KEY, CONF_ID
+#from homeassistant.const import CONF_API_KEY, CONF_ID
 from .const import DOMAIN
 
 SCAN_INTERVAL = timedelta(seconds=1800)
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
-    api_key = config_entry.data[CONF_API_KEY]
-    ba_id = config_entry.data[CONF_ID]
+    api_key = config_entry.data["api_key"]
+    ba_id = config_entry.data["ba_id"]
     eia_data = hass.data[DOMAIN][config_entry.entry_id]
 
     async_add_entities([EIASensor(api_key, ba_id, eia_data)], True)
