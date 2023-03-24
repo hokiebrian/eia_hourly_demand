@@ -1,3 +1,4 @@
+""" Setup EIA Sensor """
 from datetime import timedelta, date
 import json
 import aiohttp
