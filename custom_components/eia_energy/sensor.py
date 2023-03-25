@@ -54,5 +54,5 @@ class EIASensor(SensorEntity):
                     data = await response.json()
                     self._state = json.dumps(data["response"]["data"][0]["value"])
             except:
-                self._state = -1
+                self._state = self._state
 
