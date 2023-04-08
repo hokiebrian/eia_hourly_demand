@@ -1,0 +1,8 @@
+{
+    "name": "EIA Hourly Demand",
+    "domains": [
+        "eia_hourly_demand"
+    ],
+    "content_in_root": false,
+    "iot_class": "cloud_polling"
+}
