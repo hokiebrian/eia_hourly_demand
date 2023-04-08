@@ -1,10 +1,10 @@
 {
-    "domain": "eia_energy",
+    "domain": "eia_hourly_demand",
     "name": "EIA Demand Data by Balancing Authority",
     "config_flow": true,
     "documentation": "https://github.com/hokiebrian/eia_hourly_demand",
     "requirements": [],
     "dependencies": [],
     "codeowners": ["@hokiebrian"],
-    "version": "1.0.2"
+    "version": "1.0.3"
   }
