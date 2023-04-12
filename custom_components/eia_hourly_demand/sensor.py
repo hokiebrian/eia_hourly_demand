@@ -4,12 +4,12 @@ import json
 import aiohttp
 
 from homeassistant.components.sensor import SensorEntity, SensorStateClass
-#from homeassistant.const import CONF_API_KEY, CONF_ID
 from .const import DOMAIN
+from homeassistant.core import HomeAssistant
 
 SCAN_INTERVAL = timedelta(seconds=1800)
 
-async def async_setup_entry(hass, config_entry, async_add_entities):
+async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entities):
     api_key = config_entry.data["api_key"]
     ba_id = config_entry.data["ba_id"]
     eia_data = hass.data[DOMAIN][config_entry.entry_id]
@@ -30,7 +30,7 @@ class EIASensor(SensorEntity):
 
     @property
     def name(self):
-        return "Hourly Demand " + self._ba_id
+        return f"Hourly Demand {self._ba_id}"
 
     @property
     def state(self):
@@ -38,7 +38,7 @@ class EIASensor(SensorEntity):
     
     @property
     def unique_id(self):
-        return "HourlyMWh" + self._ba_id
+        return f"HourlyMWh{self._ba_id}"
 
     async def async_update(self):
         start_date = (date.today() - timedelta(days=1)).strftime("%Y-%m-%d")
