@@ -20,6 +20,6 @@ async def async_setup_entry(hass, entry):
     return True
 
 async def async_unload_entry(hass, entry):
-    """Unload the EIA Energy component."""
-    await hass.services.async_remove(entry, "sensor")
+    """Unload the EIA Energy sensor platform."""
+    await hass.config_entries.async_forward_entry_unload(entry, "sensor")
     return True
