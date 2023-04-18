@@ -2,7 +2,7 @@
     "config": {
         "step": {
             "user": {
-                "description": "Enter your EIA Info",
+                "description": "Enter your EIA Information",
                 "data": {
                     "api_key": "EIA API Key",
                     "ba_id": "Balancing Authority"
