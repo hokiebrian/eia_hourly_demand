@@ -28,7 +28,7 @@ This data is self-reported by the Balancing Authority on an hourly basis. It is 
 
 Multiple instances can be created if you want to track more than one BA. More info on what a BA is and does can be found here: https://www.eia.gov/todayinenergy/detail.php?id=27152
 
-## BA Codes as of March 2023
+## BA Codes as of April 2023
 
 | BA Code | BA Name                                                            | Region/Country Name |
 |---------|--------------------------------------------------------------------|---------------------|
