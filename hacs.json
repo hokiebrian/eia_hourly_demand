@@ -1,5 +1,3 @@
 {
     "name": "EIA Hourly Demand",
-    "content_in_root": false,
-    "iot_class": "cloud_polling"
 }
