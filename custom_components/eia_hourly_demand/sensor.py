@@ -9,6 +9,7 @@ from homeassistant.core import HomeAssistant
 
 SCAN_INTERVAL = timedelta(seconds=1800)
 
+
 async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entities):
     api_key = config_entry.data["api_key"]
     ba_id = config_entry.data["ba_id"]
@@ -16,8 +17,8 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
 
     async_add_entities([EIASensor(api_key, ba_id, eia_data)], True)
 
-class EIASensor(SensorEntity):
 
+class EIASensor(SensorEntity):
     _attr_icon = "mdi:factory"
     _attr_native_unit_of_measurement = "MWh"
     _attr_state_class: SensorStateClass = SensorStateClass.MEASUREMENT
@@ -35,17 +36,19 @@ class EIASensor(SensorEntity):
     @property
     def state(self):
         return self._state
-    
+
     @property
     def unique_id(self):
         return f"HourlyMWh{self._ba_id}"
 
     async def async_update(self):
         start_date = (date.today() - timedelta(days=1)).strftime("%Y-%m-%d")
-        url = (f"https://api.eia.gov/v2/electricity/rto/region-data/data/"
-               f"?api_key={self._api_key}&data[]=value&facets[respondent][]={self._ba_id}"
-               f"&facets[type][]=D&frequency=hourly&start={start_date}"
-               f"&sort[0][column]=period&sort[0][direction]=desc")
+        url = (
+            f"https://api.eia.gov/v2/electricity/rto/region-data/data/"
+            f"?api_key={self._api_key}&data[]=value&facets[respondent][]={self._ba_id}"
+            f"&facets[type][]=D&frequency=hourly&start={start_date}"
+            f"&sort[0][column]=period&sort[0][direction]=desc"
+        )
 
         async with aiohttp.ClientSession() as session:
             try:

@@ -4,9 +4,11 @@ from .const import DOMAIN
 CONF_API_KEY = "api_key"
 CONF_ID = "ba_id"
 
+
 def setup(hass, config):
     """Set up the EIA Energy component."""
     return True
+
 
 async def async_setup_entry(hass, entry):
     """Set up EIA Energy Data from a config entry."""
@@ -18,6 +20,7 @@ async def async_setup_entry(hass, entry):
     )
 
     return True
+
 
 async def async_unload_entry(hass, entry):
     """Unload the EIA Energy sensor platform."""
