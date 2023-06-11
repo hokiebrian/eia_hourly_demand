@@ -2,17 +2,27 @@
 from datetime import timedelta, date
 import json
 import aiohttp
-
+from homeassistant.core import HomeAssistant
 from homeassistant.components.sensor import SensorEntity, SensorStateClass
 from .const import DOMAIN
-from homeassistant.core import HomeAssistant
+
 
 SCAN_INTERVAL = timedelta(seconds=1800)
 
+API_KEY = "api_key"
+BA_ID = "ba_id"
+
+EIA_URL = (
+    "https://api.eia.gov/v2/electricity/rto/region-data/data/"
+    "?api_key={api_key}&data[]=value&facets[respondent][]={ba_id}"
+    "&facets[type][]=D&frequency=hourly&start={start_date}"
+    "&sort[0][column]=period&sort[0][direction]=desc"
+)
+
 
 async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entities):
-    api_key = config_entry.data["api_key"]
-    ba_id = config_entry.data["ba_id"]
+    api_key = config_entry.data[API_KEY]
+    ba_id = config_entry.data[BA_ID]
     eia_data = hass.data[DOMAIN][config_entry.entry_id]
 
     async_add_entities([EIASensor(api_key, ba_id, eia_data)], True)
@@ -43,11 +53,8 @@ class EIASensor(SensorEntity):
 
     async def async_update(self):
         start_date = (date.today() - timedelta(days=1)).strftime("%Y-%m-%d")
-        url = (
-            f"https://api.eia.gov/v2/electricity/rto/region-data/data/"
-            f"?api_key={self._api_key}&data[]=value&facets[respondent][]={self._ba_id}"
-            f"&facets[type][]=D&frequency=hourly&start={start_date}"
-            f"&sort[0][column]=period&sort[0][direction]=desc"
+        url = EIA_URL.format(
+            api_key=self._api_key, ba_id=self._ba_id, start_date=start_date
         )
 
         async with aiohttp.ClientSession() as session:
@@ -56,5 +63,5 @@ class EIASensor(SensorEntity):
                 async with session.get(url, timeout=timeout) as response:
                     data = await response.json()
                     self._state = json.dumps(data["response"]["data"][0]["value"])
-            except:
+            except aiohttp.ClientConnectorError:
                 self._state = None
