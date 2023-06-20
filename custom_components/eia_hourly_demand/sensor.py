@@ -1,4 +1,5 @@
 """ Setup EIA Sensor """
+import logging
 from datetime import timedelta, date
 import json
 import aiohttp
@@ -6,6 +7,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.components.sensor import SensorEntity, SensorStateClass
 from .const import DOMAIN
 
+_LOGGER = logging.getLogger(__name__)
 
 SCAN_INTERVAL = timedelta(seconds=1800)
 
@@ -52,16 +54,21 @@ class EIASensor(SensorEntity):
         return f"HourlyMWh{self._ba_id}"
 
     async def async_update(self):
-        start_date = (date.today() - timedelta(days=1)).strftime("%Y-%m-%d")
+        start_date = (date.today() - timedelta(days=7)).strftime("%Y-%m-%d")
         url = EIA_URL.format(
             api_key=self._api_key, ba_id=self._ba_id, start_date=start_date
         )
-
+        _LOGGER.debug(f"Data {url}")
         async with aiohttp.ClientSession() as session:
             try:
                 timeout = aiohttp.ClientTimeout(total=5)
                 async with session.get(url, timeout=timeout) as response:
                     data = await response.json()
                     self._state = json.dumps(data["response"]["data"][0]["value"])
-            except aiohttp.ClientConnectorError:
+            except aiohttp.ClientConnectorError as e:
+                _LOGGER.debug(f"Connection Error: {e}")
+                self._state = None
+            except (IndexError, KeyError) as e:
+                _LOGGER.error("Data Error, no data returned")
+                _LOGGER.debug(f"Data Error: {e}")
                 self._state = None
