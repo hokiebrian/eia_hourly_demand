@@ -72,3 +72,10 @@ class EIASensor(SensorEntity):
                 _LOGGER.error("Data Error, no data returned")
                 _LOGGER.debug(f"Data Error: {e}")
                 self._state = None
+            except asyncio.TimeoutError as e:
+                _LOGGER.error("Timeout Error, asyncio")
+                _LOGGER.debug(f"Data Error: {e}")
+                self._state = None
+            except Exception as e:
+                _LOGGER.error(f"An unexpected error occurred: {e}")
+                self._state = None
