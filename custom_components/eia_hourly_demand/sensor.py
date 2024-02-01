@@ -64,7 +64,8 @@ class EIASensor(SensorEntity):
                 timeout = aiohttp.ClientTimeout(total=5)
                 async with session.get(url, timeout=timeout) as response:
                     data = await response.json()
-                    self._state = json.dumps(data["response"]["data"][0]["value"])
+                    value_as_float = float(data["response"]["data"][0]["value"])
+                    self._state = value_as_float
             except aiohttp.ClientConnectorError as e:
                 _LOGGER.debug(f"Connection Error: {e}")
                 self._state = None
