@@ -55,8 +55,8 @@ class EIAConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     if response.status != 200:
                         return False
                     data = await response.json()
-                    if data["response"]["total"] == 0:
-                        return False
+#                    if data["response"]["total"] == 0:
+#                        return False
             except aiohttp.ClientConnectorError:
                 return False
 
