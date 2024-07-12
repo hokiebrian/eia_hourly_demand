@@ -1,4 +1,5 @@
 """The EIA Energy Data component."""
+
 from .const import DOMAIN
 
 CONF_API_KEY = "api_key"
@@ -13,11 +14,10 @@ def setup(hass, config):
 async def async_setup_entry(hass, entry):
     """Set up EIA Energy Data from a config entry."""
     hass.data.setdefault(DOMAIN, {})
-    hass.data[DOMAIN][entry.entry_id] = entry.data[CONF_API_KEY]
+    hass.data[DOMAIN][entry.entry_id] = entry.data
 
-    hass.async_create_task(
-        hass.config_entries.async_forward_entry_setup(entry, "sensor")
-    )
+    # Forward the setup to the sensor platform
+    await hass.config_entries.async_forward_entry_setup(entry, "sensor")
 
     return True
 
@@ -25,4 +25,9 @@ async def async_setup_entry(hass, entry):
 async def async_unload_entry(hass, entry):
     """Unload the EIA Energy sensor platform."""
     await hass.config_entries.async_forward_entry_unload(entry, "sensor")
+
+    # Clean up the entry from hass.data
+    if entry.entry_id in hass.data[DOMAIN]:
+        hass.data[DOMAIN].pop(entry.entry_id)
+
     return True
