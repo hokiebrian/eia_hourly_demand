@@ -1,12 +1,12 @@
 {
-    "domain": "eia_hourly_demand",
-    "name": "EIA Demand Data by Balancing Authority",
-    "codeowners": ["@hokiebrian"],
-    "config_flow": true,
-    "dependencies": [],
-    "documentation": "https://github.com/hokiebrian/eia_hourly_demand",
-    "iot_class":  "cloud_polling",
-    "issue_tracker": "https://github.com/hokiebrian/eia_hourly_demand/issues",
-    "requirements": [],
-    "version": "1.0.15"
-  }
+  "domain": "eia_hourly_demand",
+  "name": "EIA Demand Data by Balancing Authority",
+  "codeowners": ["@hokiebrian"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/hokiebrian/eia_hourly_demand",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/hokiebrian/eia_hourly_demand/issues",
+  "requirements": [],
+  "version": "1.1.0"
+}

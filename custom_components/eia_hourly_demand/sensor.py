@@ -1,102 +1,112 @@
-"""
-Setup EIA Sensor
-"""
+"""Sensor platform for the EIA Hourly Demand integration."""
 
-import logging
-from datetime import timedelta, date
-import aiohttp
-from homeassistant.core import HomeAssistant
-from homeassistant.components.sensor import SensorEntity, SensorStateClass
+from __future__ import annotations
+
+from typing import Any
+
+from homeassistant.components.sensor import (
+    SensorDeviceClass,
+    SensorEntity,
+    SensorEntityDescription,
+    SensorStateClass,
+)
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import UnitOfEnergy
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers import entity_platform
+from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from .const import DOMAIN
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-_LOGGER = logging.getLogger(__name__)
+from .const import (
+    ATTR_LATEST_TIMESTAMP,
+    ATTR_LATEST_VALUE,
+    CONF_BA_ID,
+    DATA_COORDINATOR,
+    DATA_SERVICES_REGISTERED,
+    DOMAIN,
+    SERVICE_REFRESH,
+)
+from .coordinator import EIAHourlyDemandCoordinator
 
-SCAN_INTERVAL = timedelta(seconds=1800)
-
-API_KEY = "api_key"
-BA_ID = "ba_id"
-
-EIA_URL = (
-    "https://api.eia.gov/v2/electricity/rto/region-data/data/"
-    "?api_key={api_key}&data[]=value&facets[respondent][]={ba_id}"
-    "&facets[type][]=D&frequency=hourly&start={start_date}"
-    "&sort[0][column]=period&sort[0][direction]=desc"
+ENTITY_DESCRIPTION = SensorEntityDescription(
+    key="hourly_demand",
+    translation_key="hourly_demand",
+    device_class=SensorDeviceClass.ENERGY,
+    state_class=SensorStateClass.MEASUREMENT,
+    native_unit_of_measurement=UnitOfEnergy.MEGA_WATT_HOUR,
+    icon="mdi:factory",
 )
 
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    config_entry: ConfigEntry,
+    entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
-):
-    """Set up the EIA sensor entry."""
-    api_key = config_entry.data[API_KEY]
-    ba_id = config_entry.data[BA_ID]
-    eia_data = hass.data[DOMAIN][config_entry.entry_id]
+) -> None:
+    """Set up the EIA Hourly Demand sensor entry."""
+    coordinator: EIAHourlyDemandCoordinator = hass.data[DOMAIN][entry.entry_id][
+        DATA_COORDINATOR
+    ]
 
-    async_add_entities([EIASensor(api_key, ba_id, eia_data)], True)
+    async_add_entities([EIAHourlyDemandSensor(coordinator, entry)], True)
 
-
-class EIASensor(SensorEntity):
-    """Representation of an EIA Sensor."""
-
-    _attr_icon = "mdi:factory"
-    _attr_native_unit_of_measurement = "MWh"
-    _attr_state_class: SensorStateClass = SensorStateClass.MEASUREMENT
-
-    def __init__(self, api_key: str, ba_id: str, eia_data: dict):
-        """Initialize the sensor."""
-        self._api_key = api_key
-        self._ba_id = ba_id
-        self._eia_data = eia_data
-        self._state = None
-
-    @property
-    def name(self) -> str:
-        """Return the name of the sensor."""
-        return f"Hourly Demand {self._ba_id}"
-
-    @property
-    def state(self) -> float:
-        """Return the state of the sensor."""
-        return self._state
-
-    @property
-    def unique_id(self) -> str:
-        """Return a unique ID for the sensor."""
-        return f"HourlyMWh{self._ba_id}"
-
-    async def async_update(self) -> None:
-        """Fetch new state data for the sensor."""
-        start_date = (date.today() - timedelta(days=7)).strftime("%Y-%m-%d")
-        url = EIA_URL.format(
-            api_key=self._api_key, ba_id=self._ba_id, start_date=start_date
+    platform = entity_platform.async_get_current_platform()
+    if not hass.data[DOMAIN].get(DATA_SERVICES_REGISTERED):
+        platform.async_register_entity_service(
+            SERVICE_REFRESH,
+            {},
+            "async_request_refresh",
         )
-        _LOGGER.debug(f"Fetching data from URL: {url}")
+        hass.data[DOMAIN][DATA_SERVICES_REGISTERED] = True
 
-        async with aiohttp.ClientSession() as session:
-            try:
-                timeout = aiohttp.ClientTimeout(total=10)
-                async with session.get(url, timeout=timeout) as response:
-                    response.raise_for_status()  # Raise an error for bad HTTP status codes
-                    data = await response.json()
-                    self._state = float(data["response"]["data"][0]["value"])
-            except aiohttp.ClientConnectorError as e:
-                _LOGGER.error(f"Connection Error: {e}")
-                self._state = None
-            except (IndexError, KeyError) as e:
-                _LOGGER.error("Data Error: Invalid or no data returned")
-                _LOGGER.debug(f"Error details: {e}")
-                self._state = None
-            except aiohttp.TimeoutError as e:
-                _LOGGER.error("Timeout Error: Request timed out")
-                _LOGGER.debug(f"Error details: {e}")
-                self._state = None
-            except aiohttp.ClientResponseError as e:
-                _LOGGER.error(f"HTTP Error: {e.status} - {e.message}")
-                self._state = None
-            except Exception as e:
-                _LOGGER.error(f"An unexpected error occurred: {e}")
-                self._state = None
+
+class EIAHourlyDemandSensor(
+    CoordinatorEntity[EIAHourlyDemandCoordinator], SensorEntity
+):
+    """Representation of an EIA Hourly Demand sensor."""
+
+    entity_description = ENTITY_DESCRIPTION
+
+    _attr_has_entity_name = True
+
+    def __init__(self, coordinator: EIAHourlyDemandCoordinator, entry: ConfigEntry) -> None:
+        super().__init__(coordinator)
+        self._ba_id = entry.data[CONF_BA_ID]
+        self._attr_unique_id = f"eia_hourly_demand_{self._ba_id.lower()}"
+
+    @property
+    def name(self) -> str | None:
+        """Return entity name."""
+        return f"{self._ba_id} Demand"
+
+    @property
+    def native_value(self) -> float | None:
+        """Return the latest demand value."""
+        data = self.coordinator.data
+        if not data:
+            return None
+        return data.get(ATTR_LATEST_VALUE)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return additional metadata about the measurement."""
+        data = self.coordinator.data or {}
+        return {
+            ATTR_LATEST_TIMESTAMP: data.get(ATTR_LATEST_TIMESTAMP),
+            ATTR_LATEST_VALUE: data.get(ATTR_LATEST_VALUE),
+        }
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Return device information for this sensor."""
+        return DeviceInfo(
+            identifiers={(DOMAIN, self._ba_id)},
+            manufacturer="U.S. Energy Information Administration",
+            name=f"EIA {self._ba_id}",
+            configuration_url="https://www.eia.gov/opendata/browser/electricity/rto",
+        )
+
+    async def async_request_refresh(self) -> None:
+        """Handle manual refresh service call."""
+        await self.coordinator.async_request_refresh()

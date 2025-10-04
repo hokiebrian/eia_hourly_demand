@@ -1,13 +1,42 @@
 {
-    "config": {
-        "step": {
-            "user": {
-                "description": "Enter your EIA Info",
-                "data": {
-                    "api_key": "EIA API Key",
-                    "ba_id": "Balancing Authority"
-                }
-            }
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to EIA",
+        "description": "Enter your EIA API details.",
+        "data": {
+          "api_key": "EIA API key",
+          "ba_id": "Balancing authority ID"
         }
+      },
+      "reauth_confirm": {
+        "title": "Re-authenticate EIA",
+        "description": "Update the EIA API key for this balancing authority.",
+        "data": {
+          "api_key": "EIA API key"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "The API key or balancing authority is invalid.",
+      "cannot_connect": "Unable to reach the EIA API."
+    },
+    "abort": {
+      "already_configured": "This balancing authority is already configured.",
+      "reauth_successful": "Re-authentication successful."
     }
+  },
+  "entity": {
+    "sensor": {
+      "hourly_demand": {
+        "name": "Demand"
+      }
+    }
+  },
+  "services": {
+    "refresh": {
+      "name": "Refresh demand data",
+      "description": "Request an immediate refresh of the latest demand value."
+    }
+  }
 }

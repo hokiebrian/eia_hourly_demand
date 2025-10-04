@@ -1,0 +1,42 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "[%key:config:step:user:title%]",
+        "description": "[%key:config:step:user:description%]",
+        "data": {
+          "api_key": "[%key:config:step:user:data:api_key%]",
+          "ba_id": "[%key:config:step:user:data:ba_id%]"
+        }
+      },
+      "reauth_confirm": {
+        "title": "[%key:config:step:reauth_confirm:title%]",
+        "description": "[%key:config:step:reauth_confirm:description%]",
+        "data": {
+          "api_key": "[%key:config:step:reauth_confirm:data:api_key%]"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "[%key:config:error:invalid_auth%]",
+      "cannot_connect": "[%key:config:error:cannot_connect%]"
+    },
+    "abort": {
+      "already_configured": "[%key:config:abort:already_configured%]",
+      "reauth_successful": "[%key:config:abort:reauth_successful%]"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "hourly_demand": {
+        "name": "[%key:entity:sensor:hourly_demand:name%]"
+      }
+    }
+  },
+  "services": {
+    "refresh": {
+      "name": "[%key:services:refresh:name%]",
+      "description": "[%key:services:refresh:description%]"
+    }
+  }
+}
