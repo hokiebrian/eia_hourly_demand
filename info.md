@@ -7,7 +7,7 @@
 
 You will need a EIA API Key (free). Register here: https://www.eia.gov/opendata/register.php
 
-## Installation
+## Installation 
 
 This provides the hourly demand data (in MWh) for a specified Balancing Authority.
 
