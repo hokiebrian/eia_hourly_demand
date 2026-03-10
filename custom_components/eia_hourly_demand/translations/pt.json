@@ -1,0 +1,13 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "description": "Adicionar a tua informação EIA",
+                "data": {
+                    "api_key": "Chave da API da EIA ",
+                    "ba_id": "Autoridade de Balanceamento"
+                }
+            }
+        }
+    }
+}
